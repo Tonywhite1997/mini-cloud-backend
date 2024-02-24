@@ -18,6 +18,8 @@ import { verifyAccount } from "../email/verify-email";
 
 dotenv.config();
 
+const LINK: string = "https://miniycloud.netlify.app/auth/login";
+
 const getJWTToken = (user_id: string): string => {
   const token = JWT.sign({ user_id }, process.env.JWT_SECRET);
   return token;
@@ -63,11 +65,6 @@ exports.register = catchAsync(
       return next(new AppError("All fields required", 400));
 
     const newUser = await User.create({ name, email, password });
-
-    const link =
-      process.env.NODE_ENV === "production"
-        ? "https://miniycloud.netlify.app/auth/login"
-        : "http://localhost:5173/auth/login";
 
     await welcomeMessage(newUser.email, link, newUser.name);
 
@@ -166,12 +163,7 @@ exports.confirmVerificationCode = catchAsync(
       { new: true }
     );
 
-    const link =
-      process.env.NODE_ENV === "production"
-        ? "https://miniycloud.netlify.app/auth/login"
-        : "http://localhost:5173/auth/login";
-
-    await emailVerificationSuccessEmail(user.email, link);
+    await emailVerificationSuccessEmail(user.email, LINK);
 
     res.status(200).json({
       status: "success",
@@ -381,17 +373,12 @@ exports.resetPassword = catchAsync(
       return next(new AppError("code expired. try again with new code", 401));
     }
 
-    const link =
-      process.env.NODE_ENV === "production"
-        ? "https://miniycloud.netlify.app/auth/login"
-        : "http://localhost:5173/auth/login";
-
     user.password = newPassword;
     user.resetCode = undefined;
     user.resetCodeExpiresAt = undefined;
     await user.save();
 
-    await changePasswordSuccessEmail(user.email, link);
+    await changePasswordSuccessEmail(user.email, LINK);
 
     res.status(200).json({
       message: "password changed successfully",
