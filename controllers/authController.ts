@@ -31,9 +31,12 @@ interface cookieType {
 }
 
 const cookieOptions: cookieType = {
-  httpOnly: process.env.NODE_ENV === "production" ? true : false,
-  sameSite: process.env.NODE_ENV === "production" ? "lax" : "none",
-  secure: process.env.NODE_ENV === "production" ? true : false,
+  // httpOnly: process.env.NODE_ENV === "production" ? true : false,
+  // sameSite: process.env.NODE_ENV === "production" ? "lax" : "none",
+  // secure: process.env.NODE_ENV === "production" ? true : false,
+  httpOnly: false,
+  sameSite: "none",
+  secure: true,
   maxAge: 1 * 60 * 60 * 1000,
 };
 
@@ -466,9 +469,12 @@ exports.deleteAccount = catchAsync(
 exports.logout = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
     const cookieOptions: cookieType = {
-      httpOnly: process.env.NODE_ENV === "production" ? true : false,
-      sameSite: process.env.NODE_ENV === "production" ? "lax" : "none",
-      secure: process.env.NODE_ENV === "production" ? true : false,
+      // httpOnly: process.env.NODE_ENV === "production" ? true : false,
+      // sameSite: process.env.NODE_ENV === "production" ? "lax" : "none",
+      // secure: process.env.NODE_ENV === "production" ? true : false,
+      httpOnly: false,
+      sameSite: "none",
+      secure: true,
       maxAge: 100,
     };
     if (process.env.NODE_ENV === "production") cookieOptions.secure = true;
