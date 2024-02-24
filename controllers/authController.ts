@@ -66,7 +66,7 @@ exports.register = catchAsync(
 
     const newUser = await User.create({ name, email, password });
 
-    await welcomeMessage(newUser.email, link, newUser.name);
+    await welcomeMessage(newUser.email, LINK, newUser.name);
 
     res.status(200).json({
       data: newUser,
