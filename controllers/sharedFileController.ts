@@ -18,53 +18,59 @@ exports.shareFile = catchAsync(
       recipientEmail,
     } = req.body.dataPayload;
 
-    if (!recipientEmail.trim())
-      return next(new AppError("A recipient email is required", 401));
-
-    if (!fileID.trim()) return next(new AppError("fileID not found", 404));
-
-    if (recipientEmail === req.user.email)
-      return next(new AppError("You can't share files with yourself", 401));
-
-    const file = await File.findOne({ _id: fileID });
-
-    if (!file) return next(new AppError("invalid file id", 404));
-
-    const recipient = await User.findOne({ email: recipientEmail });
-
-    if (!recipient) return next(new AppError("invalid email address", 404));
-
-    const userAlreadyHasFile = await SharedFile.findOne({
-      recipient: recipient._id,
-      fileID,
-    });
-
-    if (userAlreadyHasFile)
-      return next(new AppError("user already have access to this file", 401));
-
-    if (!recipient.isVerified)
-      return next(
-        new AppError("recipient's email has not been validated", 401)
-      );
-
-    const sharedFileObj = {
-      canDelete,
-      canRename,
-      canDownload,
-      fileID: fileID,
-      name: filename,
-      recipient: recipient._id,
-      recipientEmail,
-      owner: req.user._id,
-      ownerEmail: req.user.email,
-      link: file.link,
-      key: file.key,
-      mimetype: file.mimetype,
-    };
-
     try {
+      if (!recipientEmail?.trim())
+        return next(new AppError("A recipient email is required", 401));
+
+      if (!fileID?.trim()) return next(new AppError("fileID not found", 401));
+
+      if (!filename?.trim())
+        return next(new AppError("flle name not found", 401));
+
+      if (recipientEmail === req.user.email)
+        return next(new AppError("You can't share files with yourself", 401));
+
+      const file = await File.findOne({ _id: fileID });
+
+      if (!file) return next(new AppError("invalid file id", 404));
+
+      const recipient = await User.findOne({ email: recipientEmail });
+
+      if (!recipient) return next(new AppError("invalid email address", 404));
+
+      const userAlreadyHasFile = await SharedFile.findOne({
+        recipient: recipient._id,
+        fileID,
+      });
+
+      if (userAlreadyHasFile)
+        return next(new AppError("user already have access to this file", 401));
+
+      if (!recipient.isVerified)
+        return next(
+          new AppError("recipient's email has not been validated", 401)
+        );
+
+      const sharedFileObj = {
+        canDelete,
+        canRename,
+        canDownload,
+        fileID: fileID,
+        name: filename,
+        recipient: recipient._id,
+        recipientEmail,
+        owner: req.user._id,
+        ownerEmail: req.user.email,
+        link: file.link,
+        key: file.key,
+        mimetype: file.mimetype,
+      };
+
+      // try {
       await SharedFile.create(sharedFileObj);
     } catch (error) {
+      console.log(error);
+
       return next(new AppError(error.message, 500));
     }
     res.json({

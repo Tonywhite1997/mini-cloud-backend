@@ -8,6 +8,7 @@ const folderRoutes = require("./routes/folderRoutes");
 const fileRoutes = require("./routes/fileRoutes");
 const userRoutes = require("./routes/userRoutes");
 const sharedFileRoutes = require("./routes/sharedFileRoutes");
+const notificationRoutes = require("./routes/notificationRoutes");
 const AppError = require("./utils/appError");
 const catchAsync = require("./utils/catchAsync");
 
@@ -32,6 +33,7 @@ app.use(cookieParser());
 app.use("/api/auth", authRoutes);
 app.use("/api/folder", folderRoutes);
 app.use("/api/file", fileRoutes);
+app.use("/api/notification", notificationRoutes);
 app.use("/api/user", userRoutes);
 app.use("/api/share-file", sharedFileRoutes);
 

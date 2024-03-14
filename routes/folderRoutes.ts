@@ -1,10 +1,9 @@
 import express from "express";
-// import cookieParser from "cookie-parser"
 const folderController = require("../controllers/folderController");
 const authController = require("../controllers/authController");
 
 const router = express.Router();
-// router.use(cookieParser())
+
 router.use(authController.protected);
 router.use(authController.isAccountVerified);
 
