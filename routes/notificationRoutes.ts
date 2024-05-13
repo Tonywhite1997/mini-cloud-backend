@@ -8,6 +8,7 @@ router.use(authController.protected);
 
 router.post("/send", notificationController.sendNotification);
 router.get("/", notificationController.getMyNotifications);
+router.patch("/read", notificationController.readMyNotifications);
 router.delete("/clear", notificationController.clearMyNotifications);
 
 module.exports = router;

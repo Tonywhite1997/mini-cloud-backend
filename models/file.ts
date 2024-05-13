@@ -25,7 +25,7 @@ const fileShema: Schema<IFILE> = new Schema<IFILE>({
   },
   createdAt: {
     type: Date,
-    default: Date.now(),
+    default: Date.now,
   },
   mimetype: {
     type: String,

@@ -39,7 +39,7 @@ const userSchema: Schema<IUSER> = new Schema<IUSER>(
     },
     createdAt: {
       type: Date,
-      default: Date.now(),
+      default: Date.now,
     },
     resetCode: {
       type: String,

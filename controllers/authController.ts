@@ -6,6 +6,7 @@ const User = require("../models/user");
 const File = require("../models/file");
 const Folder = require("../models/folder");
 const SharedFile = require("../models/sharedFile");
+const Notification = require("../models/notification");
 const AppError = require("../utils/appError");
 const catchAsync = require("../utils/catchAsync");
 const AWSS3 = require("../aws-s3-service");
@@ -437,6 +438,9 @@ exports.deleteAccount = catchAsync(
 
       //deleting user folders
       await Folder.deleteMany({ user: user._id });
+
+      //deleting user Notifications
+      await Notification.deleteMany({ receiverEmail: user.email });
 
       //deleting user account
       const deletedAccount = await User.deleteOne({ _id: user._id });

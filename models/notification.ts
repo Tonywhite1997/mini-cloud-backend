@@ -9,13 +9,26 @@ const notificationSchema = new mongoose.Schema({
     required: true,
     type: mongoose.Schema.Types.ObjectId,
   },
+  receiverEmail: {
+    required: true,
+    type: String,
+  },
+  senderEmail: {
+    required: true,
+    type: String,
+  },
   notification: {
     required: true,
     type: String,
   },
+  isRead: {
+    required: true,
+    type: Boolean,
+    default: false,
+  },
   createdAt: {
-    default: Date.now(),
     type: Date,
+    default: Date.now,
   },
 });
 

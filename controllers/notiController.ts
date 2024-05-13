@@ -17,14 +17,20 @@ exports.sendNotification = catchAsync(
 
       if (!receiverData) return next(new AppError("invalid user", 404));
 
-      const notification = await Notification.create({
+      await Notification.create({
         sender: req.user._id,
         receiver: receiverData._id,
+        senderEmail: req.user.email,
+        receiverEmail: receiverData.email,
         notification: message,
       });
 
+      const notifications = await Notification.find({
+        receiver: receiverData._id,
+      });
+
       res.status(200).json({
-        notification,
+        notifications,
       });
     } catch (error) {
       console.log(error);
@@ -41,6 +47,28 @@ exports.getMyNotifications = catchAsync(
       message: "ok",
       notifications,
     });
+  }
+);
+
+exports.readMyNotifications = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      await Notification.updateMany(
+        { receiver: req.user?._id },
+        { isRead: true },
+        { new: true }
+      );
+
+      const notifications = await Notification.find({
+        receiver: req.user?._id,
+      });
+
+      res.status(200).json({
+        notifications,
+      });
+    } catch (error) {
+      return next(new AppError("An error occured", 500));
+    }
   }
 );
 

@@ -35,7 +35,7 @@ const sharedFileShema: Schema<SHAREDFILETYPE> = new Schema<SHAREDFILETYPE>({
   },
   createdAt: {
     type: Date,
-    default: Date.now(),
+    default: Date.now,
   },
   recipient: {
     type: mongoose.Schema.Types.ObjectId,
