@@ -21,10 +21,10 @@ const server = http.createServer(app);
 
 const io = new Server(server, {
   cors: {
-    origin:
-      process.env.NODE_ENV === "production"
-        ? "https://miniycloud.netlify.app"
-        : "http://localhost:5173",
+    origin: "https://miniycloud.netlify.app",
+    // process.env.NODE_ENV === "production"
+    //   ? "https://miniycloud.netlify.app"
+    //   : "http://localhost:5173",
     methods: ["GET", "POST", "PATCH", "DELETE", "PUT"],
   },
 });
