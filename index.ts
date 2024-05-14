@@ -40,33 +40,34 @@ io.on("connection", (socket) => {
   });
 
   socket.on("share-file", ({ data, userID }) => {
-    const isOnline = Object.keys(users).find((id) => {
-      return userID === id;
-    });
+    socket.broadcast.emit("receive-share-file", data);
 
-    if (isOnline) {
-      console.log({ online: users[isOnline] });
+    // const isOnline = Object.keys(users).find((id) => {
+    //   return userID === id;
+    // });
 
-      // io.to(users[isOnline]).emit("receive-share-file", data);
-      socket.broadcast.emit("receive-share-file", data);
-    } else {
-      console.log(false);
-    }
+    // if (isOnline) {
+    //   console.log({ online: users[isOnline] });
+
+    //   // io.to(users[isOnline]).emit("receive-share-file", data);
+    // } else {
+    //   console.log(false);
+    // }
   });
 
   socket.on("revoke-access", ({ data, userID }) => {
-    const isOnline = Object.keys(users).find((id) => {
-      return userID === id;
-    });
+    socket.broadcast.emit("alert-revoke-access", data);
+    // const isOnline = Object.keys(users).find((id) => {
+    //   return userID === id;
+    // });
 
-    if (isOnline) {
-      console.log({ online: users[isOnline] });
+    // if (isOnline) {
+    //   console.log({ online: users[isOnline] });
 
-      socket.broadcast.emit("alert-revoke-access", data);
-      // io.to(users[isOnline]).emit("alert-revoke-access", data);
-    } else {
-      console.log(false);
-    }
+    //   // io.to(users[isOnline]).emit("alert-revoke-access", data);
+    // } else {
+    //   console.log(false);
+    // }
   });
 
   socket.on("delete-owner-file", (data) => {
