@@ -10,12 +10,6 @@ config({ path: path.resolve(__dirname, ".env") });
 
 const url: string | undefined = process.env.MONGO_URL;
 const PORT: number = 5000;
-const mongooseOptions: object = {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-  useFindAndModify: false,
-  useCreateIndex: true, // Recommended for index support
-};
 
 const server = http.createServer(app);
 
@@ -92,9 +86,14 @@ io.on("connection", (socket) => {
 
 if (url) {
   mongoose
-    .connect(url, mongooseOptions)
+    .connect(url, {
+      useUnifiedTopology: true,
+      useNewUrlParser: true,
+      useCreateIndex: true,
+    })
     .then(() => {
       console.log("connected to DB");
+      console.log(url);
 
       server.listen(PORT, () => {
         console.log(`app is listening on port ${PORT}`);
@@ -102,5 +101,6 @@ if (url) {
     })
     .catch((error) => {
       console.log("error", error);
+      console.log(url);
     });
 }
