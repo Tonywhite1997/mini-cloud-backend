@@ -65,12 +65,17 @@ exports.register = catchAsync(
     if (!name.trim() || !email.trim() || !password.trim())
       return next(new AppError("All fields required", 400));
 
+    const isExistingUser = await User.findOne({ email });
+
+    if (isExistingUser)
+      return res.status(401).json({ message: "Try a different email" });
+
     const newUser = await User.create({ name, email, password });
 
     await welcomeMessage(newUser.email, LINK, newUser.name);
 
     res.status(200).json({
-      data: newUser,
+      message: "ok",
     });
   }
 );
@@ -126,7 +131,8 @@ exports.confirmVerificationCode = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
     const { verificationCode } = req.body;
 
-    if (!verificationCode) return;
+    if (!verificationCode)
+      return res.status(404).json({ message: "No code found" });
 
     const user = await User.findOne({ verificationCode });
 
@@ -282,16 +288,48 @@ exports.checkIfLogin = async (
   }
 };
 
-exports.changePassword = catchAsync(
-  async (req: Request, res: Response, next: NextFunction) => {
-    const { currentPassword, newPassword } = req.body;
+// exports.changePassword = catchAsync(
+//   async (req: Request, res: Response, next: NextFunction) => {
+//     const { currentPassword, newPassword } = req.body;
 
+//     if (!currentPassword && !newPassword)
+//       return next(new AppError("all fields are required", 404));
+
+//     const user = await User.findById(req.user._id).select("+password");
+
+//     if (!user) return next(new AppError("user with id not found", 404));
+
+//     const isCurrentPasswordMatch = await bcrypt.compare(
+//       currentPassword,
+//       user.password
+//     );
+
+//     if (!isCurrentPasswordMatch)
+//       return next(new AppError("your current password is incorrect"));
+
+//     user.password = newPassword;
+//     await user.save();
+//     user.password = undefined;
+//     res.status(200).json({
+//       status: "ok",
+//     });
+//   }
+// );
+
+exports.changePassword = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  const { currentPassword, newPassword } = req.body;
+  try {
     if (!currentPassword && !newPassword)
-      return next(new AppError("all fields are required", 404));
+      return res.status(404).json({ message: "All fields are required" });
 
     const user = await User.findById(req.user._id).select("+password");
 
-    if (!user) return next(new AppError("user with id not found", 404));
+    if (!user)
+      return res.status(404).json({ message: "User with id not found" });
 
     const isCurrentPasswordMatch = await bcrypt.compare(
       currentPassword,
@@ -299,26 +337,28 @@ exports.changePassword = catchAsync(
     );
 
     if (!isCurrentPasswordMatch)
-      return next(new AppError("your current password is incorrect"));
+      return res.status(404).json({ message: "Incorrect password" });
 
     user.password = newPassword;
     await user.save();
     user.password = undefined;
     res.status(200).json({
       status: "ok",
-      user,
     });
+  } catch (err) {
+    console.log(err);
+    return res.status(404).json({ message: "An error occured", err });
   }
-);
+};
 
 exports.forgotPassword = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
     const { email } = req.body;
-    if (!email)
-      return next(new AppError("registered email field required ", 404));
+    if (!email) return res.status(404).json({ message: "Provide email" });
     const user = await User.findOne({ email });
 
-    if (!user) return next(new AppError("enter your registered email", 404));
+    if (!user)
+      return res.status(404).json({ message: "Provide a valid email" });
     const resetCode: string = generateCode();
     const resetCodeExpiresAt = new Date().setMinutes(
       new Date().getMinutes() + 5

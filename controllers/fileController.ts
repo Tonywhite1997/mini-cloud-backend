@@ -101,7 +101,7 @@ exports.saveFile = catchAsync(
 
 exports.renameFile = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
-    const { newFileName, id } = req.body.fileData;
+    const { newFileName, id } = req.body;
 
     if (!newFileName || !id)
       return next(new AppError("file id and new filename required", 401));
@@ -137,7 +137,7 @@ exports.renameFile = catchAsync(
   }
 );
 
-exports.downloadFIle = catchAsync(
+exports.downloadFile = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
     const { objectID } = req.params;
     try {
@@ -150,10 +150,9 @@ exports.downloadFIle = catchAsync(
       if (!result) return next(new AppError("Error: Try again", 500));
 
       res.setHeader("Content-Type", file.mimetype);
-      res.setHeader("Transfer-Encoding", "chunked");
       res.setHeader(
         "Content-Disposition",
-        `attachment; filename=${file.fileName}`
+        `attachment; filename="${encodeURIComponent(file.fileName)}"`
       );
 
       result.pipe(res);
@@ -166,7 +165,8 @@ exports.downloadFIle = catchAsync(
 exports.moveFileToFolder = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
     const { fileID } = req.params;
-    const { currentFolderID, targetFolderID } = req.query;
+    // const { currentFolderID, targetFolderID } = req.query;
+    const { targetFolderID } = req.body;
 
     if (!fileID)
       return next(
@@ -318,7 +318,11 @@ exports.deleteMultipleFiles = catchAsync(
 
 exports.getCurrentUserFiles = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
-    const files = await File.find({ user: req.user._id });
+    const files = await File.find({
+      user: req.user._id,
+      $or: [{ folder: { $exists: false } }, { folder: null }],
+    });
+
     res.status(200).json({
       status: "ok",
       files,

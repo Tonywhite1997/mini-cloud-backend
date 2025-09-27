@@ -15,7 +15,8 @@ const server = http.createServer(app);
 
 const io = new Server(server, {
   cors: {
-    origin: "https://miniycloud.netlify.app",
+    origin: "http://localhost:5173",
+    // origin: "https://miniycloud.netlify.app",
     // process.env.NODE_ENV === "production"
     //   ? "https://miniycloud.netlify.app"
     //   : "http://localhost:5173",
@@ -95,8 +96,8 @@ if (url) {
       console.log("connected to DB");
       console.log(url);
 
-      server.listen(PORT, () => {
-        console.log(`app is listening on port ${PORT}`);
+      server.listen(3000, () => {
+        console.log(`app is listening on port 3000`);
       });
     })
     .catch((error) => {

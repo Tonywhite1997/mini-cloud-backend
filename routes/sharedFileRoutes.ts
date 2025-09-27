@@ -12,12 +12,12 @@ router.get("/files", sharedFileController.getUserSharedFiles);
 router.get("/borrowed-files", sharedFileController.getUserBorrowedFiles);
 router.get("/file/:fileID", sharedFileController.getFile);
 router.get("/file/download/:fileID", sharedFileController.downloadSharedFile);
-router.post(
+router.patch(
   "/file/edit-permissions",
   sharedFileController.editRecipientPermissions
 );
-router.post("/file/rename", sharedFileController.renameSharedFile);
-router.post(
+router.patch("/file/rename", sharedFileController.renameSharedFile);
+router.patch(
   "/file/revoke-permissions",
   sharedFileController.revokeRecipientAccess
 );

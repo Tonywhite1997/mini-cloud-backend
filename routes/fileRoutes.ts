@@ -11,13 +11,13 @@ router.get("/files", fileController.getCurrentUserFiles);
 router.get("/:fileID", fileController.getFile);
 router.get("/files/:folderID", fileController.getCurrentUserFolderFiles);
 router.post("/verify-available-space", fileController.verifyAvailableSpace);
-router.post("/rename-file", fileController.renameFile);
+router.patch("/rename-file", fileController.renameFile);
 router.post(
   "/upload/:folderID?",
   fileController.uploadFile,
   fileController.saveFile
 );
-router.get("/download/:objectID", fileController.downloadFIle);
+router.get("/download/:objectID", fileController.downloadFile);
 router.patch("/move-file/:fileID", fileController.moveFileToFolder);
 router.patch("/move-files", fileController.moveMultipleFilesToFolder);
 router.delete("/:objectID", fileController.deleteFile);
